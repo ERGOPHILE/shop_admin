@@ -4,7 +4,8 @@
     通过基础的 1/24 分栏任意扩展组合形成较为复杂的混合布局。
       :span表示所占的比例
     -->
-  <el-row type="flex" class="row-bg login" justify="center" align="middle"s<el-col :xs="12" :sm="10" :md="8" :lg="6" :xl="4" class="login-content">
+  <el-row type="flex" class="row-bg login" justify="center" align="middle">
+    <el-col :xs="12" :sm="10" :md="8" :lg="6" :xl="4" class="login-content">
       <el-form label-position="top" :model="loginForm" :rules="rules" ref="loginForm" label-width="80px">
         <el-form-item label="账号" prop="username">
           <el-input v-model="loginForm.username"></el-input>
@@ -73,16 +74,16 @@ export default {
                     //es6中的解构 let {useanme,password} = obj
                     const { data, meta } = res.data;
                     if (meta.status === 200) {
-                     // 登录成功后把成功的表识(token)存入localStorage
-                     localStorage.setItem('toket',data.token);
-                     // 路由跳转注意：在Vue实例内部，您可以访问路由器实例$router。你可以打电话this.$router.push。
-                     this.$router.push('/home')
-                    }else{
-                      this.$message({
+                        // 登录成功后把成功的表识(token)存入localStorage
+                        localStorage.setItem("token", data.token);
+                        // 路由跳转注意：在Vue实例内部，您可以访问路由器实例$router。你可以打电话this.$router.push。
+                        this.$router.push("/home");
+                    } else {
+                        this.$message({
                             showClose: true,
-                            message: "错了哦，这是一条错误消息",
+                            message: "登录失败:"+meta.msg,
                             type: "error",
-                            duration:1000
+                            duration: 1000
                         });
                     }
                 });
@@ -103,7 +104,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style>
 .login {
     height: 100%;
     background-color: #2d434c;

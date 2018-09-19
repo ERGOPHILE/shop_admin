@@ -5,3 +5,13 @@ body {
   margin: 0;
   padding: 0;
 }
+.el-menu-item-group__title {
+          height: 36px;
+          line-height: 36px !important;
+ }
+ .el-menu-item-group__title:hover{
+       background: #303133;
+ }
+ .el-menu-item-group__title:hover.count{
+       color: rgb(255, 208, 75);
+ }

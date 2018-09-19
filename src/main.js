@@ -7,6 +7,7 @@ import router from './router'
 import ElementUI from 'element-ui'
 
 import '@/assets/index.css'
+import '@/assets/logo.png'
 import 'element-ui/lib/theme-chalk/index.css'
 // 安装插件
 Vue.use(ElementUI)
