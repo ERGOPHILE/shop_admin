@@ -37,6 +37,7 @@ router.beforeEach((to, from, next) => {
     // 如果访问的不是登录页面
     // 判断是否登录成功，成功直接next()
     const token = localStorage.getItem('token')
+    // const str = 'Bearer
     if (token) {
       next()
     } else {

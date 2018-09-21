@@ -16,15 +16,17 @@
     </el-header>
     <el-container>
       <el-aside width="200px" class="aside">
-        <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
+        <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" router>
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-location"></i>
               <span>用户管理</span>
             </template>
-            <el-menu-item index="1-1">
-              <i class="el-icon-menu"></i>
-              <span>用户列表</span>
+            <el-menu-item index="/home/user">
+              <template slot="title">
+                <i class="el-icon-menu"></i>
+                <span>用户列表</span>
+              </template>
             </el-menu-item>
           </el-submenu>
           <el-submenu index="2">
@@ -82,7 +84,7 @@
         </el-menu>
       </el-aside>
       <el-main>
-      <!-- 用户自路由 -->
+        <!-- 用户自路由 -->
         <router-view />
       </el-main>
     </el-container>
@@ -99,9 +101,26 @@ export default {
             // console.log(key, keyPath);
         },
         loginOut() {
-           //清除浏览器存储的localStorage数据
-           localStorage.removeItem('token');
-           this.$router.push('/login');
+            //清除浏览器存储的localStorage数据
+            this.$confirm("此操作将退出登录, 是否继续?", "提示", {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                type: "warning"
+            })
+                .then(() => {
+                    this.$message({
+                        type: "success",
+                        message: "退出成功!"
+                    });
+                    localStorage.removeItem("token");
+                    this.$router.push("/login");
+                })
+                .catch(() => {
+                    this.$message({
+                        type: "info",
+                        message: "已取消退出"
+                    });
+                });
         }
     }
 };
@@ -124,7 +143,7 @@ export default {
         }
     }
     .login_out {
-      text-align:right;
+        text-align: right;
         span {
             font-weight: 700;
         }
@@ -136,16 +155,15 @@ export default {
 }
 .el-aside {
     background-color: #d3dce6;
-    color: #333;
+    background-color: rgb(84, 92, 100);
+    height: 100%;
     span {
-        font-size: 15px;
+        font-size: 14px;
     }
 }
 .el-main {
     background-color: #e9eef3;
     color: #333;
-    text-align: center;
-    line-height: 160px;
 }
 .el-container {
     height: 100%;
