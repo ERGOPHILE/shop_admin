@@ -2,7 +2,7 @@
   <el-container>
     <el-header>
       <el-row>
-        <el-col :span="8">
+        <el-col :span="8" class="logo">
           <img src="@/assets/logo.png" alt="黑马logo">
         </el-col>
         <el-col :span="8" class="header_conter">
@@ -16,7 +16,7 @@
     </el-header>
     <el-container>
       <el-aside width="200px" class="aside">
-        <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" router>
+        <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" router :unique-opened="true">
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-location"></i>
@@ -38,7 +38,7 @@
               <i class="el-icon-menu"></i>
               <span>角色列表</span>
             </el-menu-item>
-            <el-menu-item index="2-2">
+            <el-menu-item index="/home/rights">
               <i class="el-icon-menu"></i>
               <span>权限列表</span>
             </el-menu-item>
@@ -176,5 +176,8 @@ export default {
 
 .el-container:nth-child(7) .el-aside {
     line-height: 320px;
+}
+.logo {
+    text-align: left;
 }
 </style>

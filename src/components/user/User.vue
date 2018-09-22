@@ -17,29 +17,10 @@
             </el-col>
             <el-col :span="4">
                 <!-- 添加用户 -->
-                <el-button type="success" plain @click="dialogTableVisible = true">添加用户</el-button>
+                <el-button type="success" plain @click="dialogAddVisible = true">添加用户</el-button>
             </el-col>
         </el-row>
-        <el-dialog title="添加用户" :visible.sync="dialogTableVisible">
-            <el-form :model="addUser" :rules="rules" ref="addUser">
-                <el-form-item label="用户名" :label-width="formLabelWidth" prop="username">
-                    <el-input v-model="addUser.username" autocomplete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="密码" :label-width="formLabelWidth" prop="password">
-                    <el-input v-model="addUser.password" autocomplete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="邮箱" :label-width="formLabelWidth" prop="email">
-                    <el-input v-model="addUser.email" autocomplete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="手机" :label-width="formLabelWidth" prop="mobile">
-                    <el-input v-model="addUser.mobile" autocomplete="off"></el-input>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="resetForm">取 消</el-button>
-                <el-button type="primary" @click="addUsers">确 定</el-button>
-            </div>
-        </el-dialog>
+
         <!-- 用户数据渲染 -->
         <!-- 通过 Scoped slot 可以获取到 row, column, $index 和 store（table 内部的状态管理）的数据，用法参考 demo。scope.row.mg_state -->
         <el-table :data="tableData" style="width: 100%">
@@ -56,7 +37,7 @@
             </el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <el-button type="primary" icon="el-icon-edit" @click="updateOne" plain size="mini"></el-button>
+                    <el-button type="primary" icon="el-icon-edit" @click="showEditorUser(scope.row.id)" plain size="mini" :editorId="scope.row.id"></el-button>
                     <el-button type="danger" icon="el-icon-delete" @click="del(scope.row.id)" plain size="mini"></el-button>
                     <el-button type="success" plain size="mini" @click="updateTwo">
                         <i class="el-icon-check"></i>分配角色</el-button>
@@ -65,6 +46,46 @@
         </el-table>
         <el-pagination background layout="prev, pager, next" :total="totalpage" :page-size="pagesize" :current-page="currentPage" @current-change="changePage">
         </el-pagination>
+        <!-- 添加 -->
+        <el-dialog title="添加用户" :visible.sync="dialogAddVisible">
+            <el-form :model="addUser" :rules="rules" ref="addUser">
+                <el-form-item label="用户名" :label-width="formLabelWidth" prop="username">
+                    <el-input v-model="addUser.username" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="密码" type="password" :label-width="formLabelWidth" prop="password">
+                    <el-input v-model="addUser.password" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="邮箱" :label-width="formLabelWidth" prop="email">
+                    <el-input v-model="addUser.email" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="手机" :label-width="formLabelWidth" prop="mobile">
+                    <el-input v-model="addUser.mobile" autocomplete="off"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="resetForm">取 消</el-button>
+                <el-button type="primary" @click="addUsers">确 定</el-button>
+            </div>
+        </el-dialog>
+        <!-- 编辑 -->
+        <!-- 通过prop可以设置变淡验证 -->
+        <el-dialog title="编辑用户" :visible.sync="dialogEditorVisible">
+            <el-form :model="EditorUser" :rules="rules" ref="EditorUser">
+                <el-form-item label="用户名" :label-width="formLabelWidth" prop="username">
+                    <el-input v-model="EditorUser.username" autocomplete="off" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="邮箱" :label-width="formLabelWidth" prop="email">
+                    <el-input v-model="EditorUser.email" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="手机" :label-width="formLabelWidth" prop="mobile">
+                    <el-input v-model="EditorUser.mobile" autocomplete="off"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="editorRest">取 消</el-button>
+                <el-button type="primary" @click="updateOne">确 定</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -92,8 +113,16 @@ export default {
                 email: "",
                 mobile: ""
             },
+            //编辑用户
+            EditorUser: {
+                username: "",
+                email: "",
+                mobile: ""
+            },
             // 控制用户添加对话框的展示和隐藏
-            dialogTableVisible: false,
+            dialogAddVisible: false,
+            //  控制用户编辑对话框的展示和隐藏
+            dialogEditorVisible: false,
             formLabelWidth: "120px",
             //表单验证
             rules: {
@@ -159,8 +188,6 @@ export default {
                     //判断是否拿到数据
                     if (meta.status === 200) {
                         this.tableData = data.users;
-                        //当前页
-                        this.currentPage = data.pagenum;
                         //总页数
                         this.totalpage = data.total;
                     }
@@ -174,27 +201,31 @@ export default {
         },
         //搜索
         queryList() {
-            this.currentPage;
+            this.currentPage = 1;
             this.userList(this.query);
             this.query = "";
         },
-        //取消
+        //添加用户模态框隐藏
         resetForm() {
             this.$refs.addUser.resetFields();
-            this.dialogTableVisible = false;
+            this.dialogAddVisible = false;
+        },
+        //编辑用户模态框隐藏
+        editorRest() {
+            this.$refs.EditorUser.resetFields();
+            this.dialogEditorVisible = false;
         },
         //添加用户
         addUsers() {
-            //先判断验证是否通过 valid 代表成功或者不成功
+            //先判断表单验证是否通过 valid 代表成功或者不成功
             this.$refs.addUser.validate(valid => {
                 if (valid) {
                     this.$http.post("users", this.addUser).then(res => {
                         const { data, meta } = res.data;
-                        console.log(res);
-
                         if (meta.status === 201) {
-                            this.userList();
+                            // 最大页数
                             this.currentPage = 1;
+                            this.userList();
                             this.$message({
                                 message: "恭喜你，添加成功",
                                 type: "success"
@@ -229,8 +260,41 @@ export default {
                 });
             }
         },
-        //编辑用户
-        updateOne() {},
+        //显示需要编辑用户的信息
+        showEditorUser(id) {
+            this.dialogEditorVisible = true;
+            this.$http.get(`users/${id}`).then(res => {
+                const { data, meta } = res.data;
+                if (meta.status === 200) {
+                    this.EditorUser = data;
+                }
+            });
+        },
+        //更新用户信息
+        updateOne() {
+            const editorId = this.EditorUser.id;
+            //先判断表单验证是否通过 valid 代表成功或者不成功
+            this.$refs.EditorUser.validate(valid => {
+                if (valid) {
+                    this.$http.put(`users/${editorId}`,this.EditorUser).then(res => {
+                        if (res.data.meta.status === 200) {
+                            this.$message({
+                                type: "success",
+                                message: res.data.meta.msg
+                            });
+                            //重新渲染
+                            this.userList();
+                        } else {
+                            this.$message({
+                                type: error,
+                                message: "更新失败"
+                            });
+                        }
+                    });
+                }
+            });
+            this.dialogEditorVisible = false;
+        },
         //删除用户
         del(id) {
             this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
@@ -248,9 +312,14 @@ export default {
                             const index = this.tableData.findIndex(
                                 res => res.id == id
                             );
+                            this.tableData.splice(index, 1);
+                            // 最大页数
+                            const page = this.totalpage - 1;
+                            const maxPage = Math.ceil(page / this.pagesize);
 
+                            this.currentPage = maxPage;
 
-
+                            this.userList();
                             this.$message({
                                 type: "success",
                                 message: "删除成功!"
@@ -277,13 +346,5 @@ export default {
 </script>
 
 <style   lang="less">
-.user_list {
-    .breadcrumb {
-        height: 40px;
-        line-height: 40px;
-        background-color: #d4dae0;
-        font-size: 16px;
-        padding-left: 10px;
-    }
-}
+
 </style>

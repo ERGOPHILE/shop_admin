@@ -1,7 +1,15 @@
+/* 所有组件的公共类 */
 html,
 body {
   height: 100%;
   width: 100%;
   margin: 0;
   padding: 0;
+}
+ .breadcrumb {
+        height: 40px;
+        line-height: 40px !important;
+        background-color: #d4dae0;
+        font-size: 16px  !important;
+        padding-left: 10px;
 }
