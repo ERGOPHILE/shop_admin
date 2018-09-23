@@ -7,7 +7,6 @@
   </el-breadcrumb>
   <!-- 权限列表展示 -->
   <el-table :data="roloslist" style="width: 100%" height="100%">
-
     <el-table-column type="expand">
       <template slot-scope="scope">
         <el-row v-if="scope.row.children.length==0">
@@ -16,7 +15,7 @@
         <!-- 显示一级菜单内容 -->
         <el-row v-for="listOne in scope.row.children" :key="listOne.id" class="list" v-else>
           <el-col :span="4">
-            <el-tag closable>
+            <el-tag closable @close="roledDel(scope.row.id,listOne.id)">
               {{listOne.authName}}
             </el-tag>
             <i class="el-icon-arrow-right"></i>
@@ -25,14 +24,15 @@
             <!-- 显示二级菜单 -->
             <el-row v-for="listTwo in listOne.children" :key="listTwo.id" class="list2">
               <el-col :span="4">
-                <el-tag closable type='success'>
+                <el-tag closable type='success' @close="roledDel(scope.row.id,listTwo.id)">
                   {{listTwo.authName}}
                 </el-tag>
                 <i class="el-icon-arrow-right"></i>
               </el-col>
               <!-- 三级菜单 -->
               <el-col :span="20">
-                <el-tag closable type='warning' v-for="listThree in listTwo.children" :key="listThree.id" class="list3">
+                <el-tag closable type='warning' v-for="listThree in listTwo.children" :key="listThree.id" class="list3"
+                  @close="roledDel(scope.row.id,listThree.id)">
                   {{listThree.authName}}
                 </el-tag>
               </el-col>
@@ -49,14 +49,19 @@
     </el-table-column>
     <el-table-column label="操作">
       <template slot-scope="scope">
+        <!-- 角色编辑 -->
         <el-button type="primary" icon="el-icon-edit" plain size="mini" @click="editorList(scope.row.id)"></el-button>
+        <!-- 角色删除 -->
         <el-button type="danger" icon="el-icon-delete" plain size="mini" @click="roloseDel(scope.row.id)"></el-button>
-        <el-button type="success" plain size="mini">
-          <i class="el-icon-check"></i>分配权限</el-button>
+        <!-- 角色分配权限 -->
+        <el-button type="success" plain size="mini" @click="permissions(scope.row.id)">
+          <i class="el-icon-check"></i>
+          分配权限
+        </el-button>
       </template>
     </el-table-column>
   </el-table>
-  <!-- //角色编辑 -->
+  <!-- 角色编辑 -->
   <el-dialog title="编辑角色" :visible.sync="dialogRolesVisible">
     <el-form :model="editorlist">
       <el-form-item label="角色名称" label-width="120px">
@@ -69,6 +74,15 @@
     <div slot="footer" class="dialog-footer">
       <el-button @click="dialogRolesVisible = false">取 消</el-button>
       <el-button type="primary" @click="updateList">确 定</el-button>
+    </div>
+  </el-dialog>
+  <!-- 分配权限 -->
+  <el-dialog title="分配权限" :visible.sync="permissionsVisible" v-loading="loading">
+    <el-tree :data="permissionsList" show-checkbox default-expand-all node-key="id" ref="tree" highlight-current :props="defaultProps">
+    </el-tree>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="permissionsVisible = false">取 消</el-button>
+      <el-button type="primary" @click="permissionsVisible = false">确 定</el-button>
     </div>
   </el-dialog>
 </div>

@@ -15,6 +15,7 @@
       </el-row>
     </el-header>
     <el-container>
+      <!-- //default-active 当前激活菜单的 index -->
       <el-aside width="200px" class="aside">
         <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" router :unique-opened="true">
           <el-submenu index="1">
