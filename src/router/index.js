@@ -6,9 +6,11 @@ import Login from '@/components/login/Login'
 // 导入主页
 import Home from '@/components/home/Home'
 // 导入用户列表
-import User from '@/components/user/User'
-// 导入权限列表
+import Users from '@/components/users/Users'
+// 导入用户角色列表
 import Rights from '@/components/rights/Rights'
+// 导入用户权限列表
+import Roles from '@/components/roles/Roles'
 Vue.use(Router)
 
 const router = new Router({
@@ -17,8 +19,10 @@ const router = new Router({
       path: '/home',
       component: Home,
       children: [
-        { path: 'user', component: User },
-        { path: 'rights', component: Rights }
+        { path: 'users', component: Users },
+        { path: 'rights', component: Rights },
+        { path: 'roles', component: Roles }
+
       ]
     },
     { path: '/login', component: Login }
