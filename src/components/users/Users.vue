@@ -378,7 +378,7 @@ export default {
                     });
                 });
         },
-        // 用于渲染角色列表
+        // 用于渲染分配角色列表
         async showList() {
             // 用于渲染角色列表
             const list = await this.$http.get(`roles`);

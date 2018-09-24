@@ -29,7 +29,9 @@ export default {
         label: 'authName'
       },
       // 加载中
-      loading: true
+      loading: true,
+      //需要更新权限的用户id
+      updateUserID: "",
     };
   },
   methods: {
@@ -39,6 +41,11 @@ export default {
       const { data, meta } = res.data
       if (meta.status === 200) {
         this.roloslist = data
+      } else {
+        this.$message({
+          type: "error",
+          message: meta.msg
+        })
       }
     },
     // 角色编辑
@@ -63,8 +70,6 @@ export default {
       const id = this.editorlist.roleId
       const res = await this.$http.put(`roles/${id}`, this.editorlist)
       const { meta } = res.data
-      console.log(res);
-
       if (meta.status === 200) {
         this.$message({
           type: "success",
@@ -135,6 +140,7 @@ export default {
     //分配权限渲染
     async permissions(id) {
       this.loading = true
+      this.updateUserID = id
       // 显示编辑框
       this.permissionsVisible = true
       const res = await this.$http.get('rights/tree')
@@ -153,12 +159,43 @@ export default {
           })
         })
         //分配权限显示本身含有的权限
-        this.$refs.tree.setCheckedKeys(arrId);
+        this.$refs.permissionsList.setCheckedKeys(arrId);
       }
     },
     //分配权限更新
     async permissionsUpdate() {
-      //分配权限渲染
+      //获取全选中的权限id
+      const getCheckedKeys = this.$refs.permissionsList.getCheckedKeys()
+      //获取半选中的权限id
+      const getHalfCheckedKeys = this.$refs.permissionsList.getHalfCheckedKeys()
+      // 所有的选中的权限id
+      const allRid = getCheckedKeys.concat(getHalfCheckedKeys).join(",");
+      if (allRid === "") {
+        this.$message({
+          type: "warning",
+          message: "请选择"
+        })
+        return
+      }
+      //发送请求更新用户权限
+      const res = await this.$http.post(`roles/${this.updateUserID}/rights`, { rids: allRid })
+      if (res.data.meta.status === 200) {
+        // 隐藏编辑框
+        this.permissionsVisible = false
+        this.$message({
+          type: "success",
+          message: res.data.meta.msg
+        })
+        //注意需要重新获取角色列表
+        this.rolosList()
+      } else {
+        this.$message({
+          type: "error",
+          message: res.data.meta.msg
+        })
+      }
+
+      // getHalfCheckedKeys
     }
   }
 }

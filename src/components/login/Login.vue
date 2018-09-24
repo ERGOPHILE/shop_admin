@@ -5,7 +5,7 @@
       :span表示所占的比例
     -->
     <el-row type="flex" class="row-bg login" justify="center" align="middle">
-        <el-col :xs="12" :sm="10" :md="8" :lg="6" :xl="4" class="login-content">
+        <el-col :xs="16" :sm="14" :md="12" :lg="10" :xl="6" class="login-content">
             <el-form label-position="top" :model="loginForm" :rules="rules" ref="loginForm" label-width="80px">
                 <el-form-item label="账号" prop="username">
                     <el-input v-model="loginForm.username"></el-input>
@@ -65,7 +65,7 @@ export default {
         // 接口基准地址：http://localhost:8888/api/private/v1/
         // 请求路径：login
         login() {
-           this.$http
+            this.$http
                 .post(
                     "http://localhost:8888/api/private/v1/login",
                     this.loginForm
@@ -81,7 +81,7 @@ export default {
                     } else {
                         this.$message({
                             showClose: true,
-                            message: "登录失败:"+meta.msg,
+                            message: "登录失败:" + meta.msg,
                             type: "error",
                             duration: 1000
                         });
