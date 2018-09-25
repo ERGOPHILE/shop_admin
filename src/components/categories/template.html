@@ -1,0 +1,76 @@
+<div class="user_list">
+
+  <!-- //搜索功能 -->
+  <!-- Row 组件 提供 gutter 属性来指定每一栏之间的间隔，默认间隔为 0。 -->
+  <el-row>
+    <el-col :span="4">
+      <!-- 添加用户 -->
+      <el-button type="success" plain @click="categoriesAddList" ping @>添加分类</el-button>
+    </el-col>
+  </el-row>
+  <!-- // 商品渲染 -->
+  <el-table ref="singleTable" :data="categorieslist" highlight-current-row style="width: 100%" height="400" v-loading="loading">
+    <!-- el-table-tree-column是一个第三方插件,用于实现表格的展开功能(属性解构
+        )
+       file-icon 文件图标
+       folder-icon 文件夹图片
+       tree-key 作用:用来与其他的节点进行区别,展开的时候就只能展开当前项
+        tree-key的值表示：使用数据中的那个属性作为key
+        levey-key指定使用数据中的那个属性作为key
+        cat_level 表示那一级菜单
+        parent-key 用来收起菜单
+            他的值是当前分类的父级id cat_pid
+        child-key 用来指定使用数据中的那个属性表示子菜单
+          默认值为：children所以此处可以省略不写
+          indent-size 表示缩进的宽度
+      -->
+    <!-- type="index"  序号 -->
+    <el-table-tree-column tree-key="cat_id" level-key="cat_level" parent-key="cat_pid" child-key="children"
+      :indent-size="30" file-icon="icon icon-file" folder-icon="icon icon-folder" prop="cat_name" label="分类名称"></el-table-tree-column>
+    </el-table-column>
+    <el-table-column prop="cat_deleted" label="是否有效" width="120">
+      <template slot-scope="scope">
+        {{scope.row.cat_deleted?"有效":"无效"}}
+      </template>
+    </el-table-column>
+    <el-table-column prop="cat_level" label="菜单级别">
+      <template slot-scope="scope">
+        {{scope.row.cat_level}}
+      </template>
+    </el-table-column>
+    <el-table-column label="操作">
+      <template slot-scope="scope">
+        <el-button type="danger" icon="el-icon-delete" plain size="mini"></el-button>
+        <el-button type="success" plain size="mini">
+          <i class="el-icon-check"></i>分配角色</el-button>
+      </template>
+    </el-table-column>
+  </el-table>
+  <el-pagination background layout="prev, pager, next" :total="total" @current-change="page">
+  </el-pagination>
+  <!-- 添加分类 -->
+  <!-- //种植表单必须指定prop属性 设置在el-form上-->
+  <el-dialog title="添加分类" :visible.sync="dialogAddVisible" @close="closeCategoriesAddDialog">
+    <el-form ref="fatherAddList" :model="fatherAddList">
+      <el-form-item label="分类名称" label-width="120px" prop="categoriesName">
+        <el-input v-model="fatherAddList.categoriesName" autocomplete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="父级名称" label-width="120px" prop="fatherUser">
+        <div class="block">
+          <!-- props会遍历对象中的属性
+  <!-- filterable搜索
+          change-on-select可以选择任意一级分类-->
+          <el-cascader placeholder="搜索" :options="fatherAddList.categoriesAddlist" :props="{
+              label: 'cat_name',
+              value: 'cat_id',
+          }"
+            filterable @change="get" change-on-select @active-item-change="get" clearable v-model="fatherAddList.fatherUser"></el-cascader>
+        </div>
+      </el-form-item>
+    </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="dialogAddVisible = false">取 消</el-button>
+      <el-button type="primary" @click="addCategories">确 定</el-button>
+    </div>
+  </el-dialog> -->
+</div>

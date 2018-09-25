@@ -1,106 +1,57 @@
 <template>
-  <el-container>
-    <el-header>
-      <el-row>
-        <el-col :span="8" class="logo">
-          <img src="@/assets/logo.png" alt="黑马logo">
-        </el-col>
-        <el-col :span="8" class="header_conter">
-          <h1 class="title">电商后台管理系统</h1>
-        </el-col>
-        <el-col :span="8" class="login_out">
-          <span>欢迎上海前端25期星曜会员</span>
-          <a href="javascript:;" @click.prevent="loginOut">退出</a>
-        </el-col>
-      </el-row>
-    </el-header>
     <el-container>
-      <!-- //default-active 当前激活菜单的 index -->
-      <el-aside width="200px" class="aside">
-        <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" router :unique-opened="true">
-          <el-submenu index="1">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>用户管理</span>
-            </template>
-            <el-menu-item index="/home/users">
-              <template slot="title">
-                <i class="el-icon-menu"></i>
-                <span>用户列表</span>
-              </template>
-            </el-menu-item>
-          </el-submenu>
-          <el-submenu index="2">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>权限管理</span>
-            </template>
-            <el-menu-item index="/home/roles">
-              <i class="el-icon-menu"></i>
-              <span>角色列表</span>
-            </el-menu-item>
-            <el-menu-item index="/home/rights">
-              <i class="el-icon-menu"></i>
-              <span>权限列表</span>
-            </el-menu-item>
-          </el-submenu>
-          <el-submenu index="3">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>商品管理</span>
-            </template>
-            <el-menu-item index="3-1">
-              <i class="el-icon-menu"></i>
-              <span>分类参数</span>
-            </el-menu-item>
-            <el-menu-item index="3-2">
-              <i class="el-icon-menu"></i>
-              <span>商品分类</span>
-            </el-menu-item>
-            <el-menu-item index="3-3">
-              <i class="el-icon-menu"></i>
-              <span>商品列表</span>
-            </el-menu-item>
-          </el-submenu>
-          <el-submenu index="4">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>订单管理</span>
-            </template>
-            <el-menu-item index="4-1">
-              <i class="el-icon-menu"></i>
-              <span>订单列表</span>
-            </el-menu-item>
-          </el-submenu>
-          <el-submenu index="5">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>数据统计</span>
-            </template>
-            <el-menu-item index="5-1">
-              <i class="el-icon-menu"></i>
-              <span>数据报表</span>
-            </el-menu-item>
-          </el-submenu>
-        </el-menu>
-      </el-aside>
-      <el-main>
-        <!-- 用户自路由 -->
-        <router-view />
-      </el-main>
+        <el-header>
+            <el-row>
+                <el-col :span="8" class="logo">
+                    <img src="@/assets/logo.png" alt="黑马logo">
+                </el-col>
+                <el-col :span="8" class="header_conter">
+                    <h1 class="title">电商后台管理系统</h1>
+                </el-col>
+                <el-col :span="8" class="login_out">
+                    <span>欢迎上海前端25期星曜会员</span>
+                    <a href="javascript:;" @click.prevent="loginOut">退出</a>
+                </el-col>
+            </el-row>
+        </el-header>
+        <el-container>
+            <!-- //default-active 当前激活菜单的 index -->
+            <el-aside width="200px" class="aside">
+                <el-menu default-active="2" class="el-menu-vertical-demo" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" router :unique-opened="true">
+                    <el-submenu :index="list.id +''" v-for=" list in menu" :key="list.id">
+                        <template slot="title">
+                            <i class="el-icon-location"></i>
+                            <span>{{list.authName}}</span>
+                        </template>
+                        <el-menu-item :index="list2.path" v-for="list2 in list.children" :key="list2.id">
+                            <template slot="title">
+                                <i class="el-icon-menu"></i>
+                                <span>{{list2.authName}}</span>
+                            </template>
+                        </el-menu-item>
+                    </el-submenu>
+                </el-menu>
+            </el-aside>
+            <el-main>
+                <!-- 用户自路由 -->
+                <router-view />
+            </el-main>
+        </el-container>
     </el-container>
-  </el-container>
 </template>
 
 <script>
 export default {
+    created() {
+        this.menusRoles();
+    },
+    data() {
+        return {
+            menu: []
+        };
+    },
     methods: {
-        handleOpen(key, keyPath) {
-            // console.log(key, keyPath);
-        },
-        handleClose(key, keyPath) {
-            // console.log(key, keyPath);
-        },
+        //退出登录
         loginOut() {
             //清除浏览器存储的localStorage数据
             this.$confirm("此操作将退出登录, 是否继续?", "提示", {
@@ -122,6 +73,14 @@ export default {
                         message: "已取消退出"
                     });
                 });
+        },
+        // 左侧菜单权限
+        async menusRoles() {
+            const res = await this.$http.get("menus");
+            const { data, meta } = res.data;
+            if (meta.status === 200) {
+                this.menu = data;
+            }
         }
     }
 };
