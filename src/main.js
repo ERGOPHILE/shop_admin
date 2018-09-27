@@ -6,7 +6,8 @@ import router from './router'
 
 // 导入全局样式
 import '@/assets/index.css'
-
+// 导入日期格式化组件
+import './filters'
 // 导入elementui - js
 import ElementUI from 'element-ui'
 // 导入elementui - css

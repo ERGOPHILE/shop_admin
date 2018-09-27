@@ -48,7 +48,7 @@
         </el-pagination>
         <!-- 添加 -->
         <el-dialog title="添加用户" :visible.sync="dialogAddVisible">
-            <el-form :model="addUser" :rules="rules" ref="addUser">
+            <el-form :model="addUser"  ref="addUser" :rules="rules">
                 <el-form-item label="用户名" label-width="120px" prop="username">
                     <el-input v-model="addUser.username" autocomplete="off"></el-input>
                 </el-form-item>
@@ -254,6 +254,8 @@ export default {
         },
         //添加用户
         addUsers() {
+            console.log( this.$refs.addUser);
+
             //先判断表单验证是否通过 valid 代表成功或者不成功
             this.$refs.addUser.validate(valid => {
                 if (valid) {

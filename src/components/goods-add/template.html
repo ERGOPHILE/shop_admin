@@ -1,0 +1,67 @@
+<div>
+  <!-- 进度条 -->
+  <el-steps :active="active" finish-status="success">
+    <el-step title="步骤 1" description="基本信息"></el-step>
+    <el-step title="步骤 2" description="商品图片"></el-step>
+    <el-step title="步骤 3" description="商品内容"></el-step>
+  </el-steps>
+  <!-- 标签页 标签一共有四个方向的设置 tabPosition="left|right|top|bottom" -->
+  <!-- <!-- v-model="activeName" 设置默认选项 -- 通过设置name="second">
+  并将 Form-Item 的 prop 属性设置为需校验的字段名即可-->
+  <el-tabs tabPosition="left" v-model="activeName" @tab-click="handleClick">
+    <el-tab-pane label="基本信息" name="first">
+      <el-form ref="goodsAddForm" label-width="80px" :model="goodsAddForm" :rules="rules">
+        <el-form-item label="商品名称" prop="goods_name">
+          <el-input v-model="goodsAddForm.goods_name"></el-input>
+        </el-form-item>
+        <el-form-item label="商品价格" prop="goods_price">
+          <el-input v-model="goodsAddForm.goods_price"></el-input>
+        </el-form-item>
+        <el-form-item label="商品重量" prop="goods_weight">
+          <el-input v-model="goodsAddForm.goods_weight"></el-input>
+        </el-form-item>
+        <el-form-item label="商品数量" prop="goods_number">
+          <el-input v-model="goodsAddForm.goods_number"></el-input>
+        </el-form-item>
+        <el-form-item label="商品分类">
+          <!-- // props 会遍历数据对象中的属性 -->
+          <el-cascader placeholder="可搜索" :options="goodsCatlist" filterable :props="{
+                  label: 'cat_name',
+                  value: 'cat_id',
+          }"
+            v-model="goods_cat"></el-cascader>
+        </el-form-item>
+        <el-form-item label="是否促销" prop="is_promote">
+          <el-radio v-model="goodsAddForm.is_promote" label="1">是</el-radio>
+          <el-radio v-model="goodsAddForm.is_promote" label="2">否</el-radio>
+        </el-form-item>
+      </el-form>
+      <el-row :span="20">
+        <el-col :push="2">
+          <el-button type="primary" @click="oneAddData">下一步</el-button>
+        </el-col>
+      </el-row>
+    </el-tab-pane>
+    <el-tab-pane label="商品图片" name="two">
+      <el-upload class="avatar-uploader" action="http://localhost:8888/api/private/v1/upload" :on-success="handleAvatarSuccess"
+        :headers="uploadHeaders" :before-upload="beforeAvatarUpload" list-type="picture-card">
+        <img v-if="imageUrl" :src="imageUrl" class="avatar" width="100%">
+        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过2MB</div>
+      </el-upload>
+      <el-row :span="20" class="imgNext">
+        <el-col>
+          <el-button type="primary" @click="twoAddData">下一步</el-button>
+        </el-col>
+      </el-row>
+    </el-tab-pane>
+    <el-tab-pane label="商品内容" name="three">
+      <quill-editor v-model="goodsAddForm.goods_introduce"></quill-editor>
+      <el-row :span="20">
+        <el-col>
+          <el-button type="primary" @click="threeAddData">下一步</el-button>
+        </el-col>
+      </el-row>
+    </el-tab-pane>
+  </el-tabs>
+</div>

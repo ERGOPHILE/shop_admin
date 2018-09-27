@@ -1,6 +1,8 @@
 export default {
   created() {
-    this.goodsList()
+    //获取地址栏的值
+    const page = this.$route.params.page
+    this.goodsList(page)
   },
   data() {
     return {
@@ -14,13 +16,21 @@ export default {
       goodslist: []
     }
   },
+  //监听路由变化
+  watch: {
+    $route(to) {
+      const page = to.params.page
+      console.log(page);
+      this.goodsList(page)
+    }
+  },
   methods: {
     //商品列表渲染
-    async  goodsList() {
+    async  goodsList(pagenum = 1) {
       const res = await this.$http.get('goods', {
         params: {
           //当前页面码
-          pagenum: this.pagenum,
+          pagenum: pagenum,
           //每页显示的条数
           pagesize: this.pagesize
         }
@@ -28,17 +38,15 @@ export default {
       const { data, meta } = res.data
       if (meta.status === 200) {
         this.goodslist = data.goods
+        //总条数
+        this.total = data.total
+        //当前页码因为从服务器拿的数据都是字符串所以要转为数字类型
+        this.pagenum = data.pagenum - 0
       }
-      //总条数
-      this.total = data.total
-      //当前页码
-      this.pagenum = data.pagenum
     },
-    //分页
+    //点击分页进行跳转
     page(currentPage) {
-      this.pagenum = currentPage
-      this.goodsList()
-    },
-
+      this.$router.push(`/goods/${currentPage}`)
+    }
   }
 }
